@@ -18,6 +18,7 @@ pub struct Spec {
 pub enum SpecType {
     String,
     Int32,
+    UInt32,
     List(Box<SpecType>),
     Map {
         #[serde(rename = "mapKey")]
@@ -54,6 +55,14 @@ impl Spec {
                 if let Value::Number(n) = value {
                     if n.is_i64() {
                         return format!("{}", n.as_i64().unwrap() as i32);
+                    }
+                }
+                panic!("SpecType::Int32 value is not an int")
+            }
+            SpecType::UInt32 => {
+                if let Value::Number(n) = value {
+                    if n.is_u64() {
+                        return format!("{}", n.as_u64().unwrap() as u32);
                     }
                 }
                 panic!("SpecType::Int32 value is not an int")

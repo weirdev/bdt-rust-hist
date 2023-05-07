@@ -2,6 +2,7 @@ pub mod bint32;
 pub mod blist;
 pub mod bmap;
 pub mod bstring;
+pub mod buint32;
 
 use serde_json::Value;
 

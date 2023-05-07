@@ -1,9 +1,11 @@
 use serde_json::Value;
 
+use crate::bint::buint32::BUInt32;
+
 use super::{FromJsonValue, ToRust};
 
 pub struct BMap<K, V> {
-    length: [u8; 4],
+    length: BUInt32,
     // TODO: Tree or hash map layout, or helper field for the same
     data: Box<[(K, V)]>,
 }
@@ -12,7 +14,9 @@ impl<K: FromJsonValue<K>, V: FromJsonValue<V>> FromJsonValue<BMap<K, V>> for BMa
     fn from_json_value(value: &Value) -> BMap<K, V> {
         if let Value::Object(map) = value {
             return BMap {
-                length: (map.len() as u32).to_le_bytes(),
+                length: BUInt32 {
+                    data: (map.len() as u32).to_le_bytes(),
+                },
                 data: map
                     .iter()
                     .map(|(k, v)| {
