@@ -2,6 +2,7 @@ use serde_json::Value;
 
 use super::{FromJsonValue, ToRust};
 
+#[repr(transparent)]
 pub struct BInt32 {
     // Stored in little endian
     // Four bytes are used explicitly, rather than i32, to ensure wire consistency

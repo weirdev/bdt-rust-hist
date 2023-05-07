@@ -5,6 +5,7 @@ use std::slice;
 
 use super::{FromJsonValue, ToRust};
 
+#[repr(transparent)]
 pub struct BList<T> {
     element_type: PhantomData<*const T>,
     data: [u8; 16],

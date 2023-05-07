@@ -5,6 +5,7 @@ use std::str;
 
 use super::{FromJsonValue, ToRust};
 
+#[repr(transparent)]
 pub struct BString {
     data: [u8; 16],
 }

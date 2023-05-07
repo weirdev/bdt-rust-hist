@@ -5,6 +5,7 @@ use std::slice;
 
 use super::{FromJsonValue, ToRust};
 
+#[repr(transparent)]
 pub struct BMap<K, V> {
     key_type: PhantomData<*const K>,
     value_type: PhantomData<*const V>,
@@ -12,7 +13,7 @@ pub struct BMap<K, V> {
     data: [u8; 16],
 }
 
-// TODO: Extern type
+#[repr(C)]
 pub struct KVPair<K, V> {
     pub key: K,
     pub value: V,
