@@ -1,8 +1,7 @@
 use serde_json::Value;
-use std::str;
 use std::mem::transmute;
 use std::slice;
-
+use std::str;
 
 use super::{FromJsonValue, ToRust};
 
@@ -39,7 +38,6 @@ impl BString {
 
         unsafe { slice::from_raw_parts(raw_ptr, len) }
     }
-
 
     fn get_elements_as_slice_mut(&mut self) -> &mut [u8] {
         let raw_ptr = usize::from_le_bytes(self.data[..8].try_into().unwrap()) as *mut u8;
