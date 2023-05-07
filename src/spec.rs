@@ -9,17 +9,22 @@ use std::path::Path;
 
 #[derive(Serialize, Deserialize)]
 pub struct Spec {
-    #[serde(rename = "type")] 
+    #[serde(rename = "type")]
     pub tp: SpecType,
     pub value: Value,
 }
 
-#[derive(Serialize, Deserialize)]
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone)]
 pub enum SpecType {
     String,
     Int32,
     List(Box<SpecType>),
+    Map {
+        #[serde(rename = "mapKey")]
+        map_key: Box<SpecType>,
+        #[serde(rename = "mapValue")]
+        map_value: Box<SpecType>,
+    },
 }
 
 impl ToString for Spec {
@@ -67,7 +72,25 @@ impl Spec {
                 } else {
                     panic!("SpecType::List value is not an array");
                 }
-            },
+            }
+            SpecType::Map { map_key, map_value } => {
+                if let Value::Object(map) = value {
+                    let mut result = String::from("{");
+                    for (key, value) in map {
+                        result
+                            .push_str(&Spec::view_to_string(map_key, &Value::String(key.clone())));
+                        result.push_str(": ");
+                        result.push_str(&Spec::view_to_string(map_value, value));
+                        result.push_str(", ");
+                    }
+                    result.pop();
+                    result.pop();
+                    result.push('}');
+                    result
+                } else {
+                    panic!("SpecType::Map value is not an object");
+                }
+            }
         }
     }
 }

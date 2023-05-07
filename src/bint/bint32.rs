@@ -17,7 +17,7 @@ impl FromJsonValue<BInt32> for BInt32 {
                 };
             }
         }
-        panic!("Attempting to create BInt32 from non-int")  
+        panic!("Attempting to create BInt32 from non-int")
     }
 }
 

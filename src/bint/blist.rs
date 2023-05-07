@@ -15,7 +15,7 @@ impl<T: FromJsonValue<T>> FromJsonValue<BList<T>> for BList<T> {
                 data: values.iter().map(|v| T::from_json_value(v)).collect(),
             };
         }
-        panic!("SpecType::Int32 value is not an int")  
+        panic!("Attempting to construct BList from non-array")  
     }
 }
 
