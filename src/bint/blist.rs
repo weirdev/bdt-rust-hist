@@ -2,7 +2,7 @@ use serde_json::Value;
 use std::marker::PhantomData;
 use std::mem::transmute;
 
-use super::{buint32::BUInt32, FromJsonValue, ToRust};
+use super::{FromJsonValue, ToRust};
 
 pub struct BList<T> {
     element_type: PhantomData<*const T>,
