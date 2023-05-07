@@ -60,7 +60,7 @@ fn map_string_int32_test() {
         &bint
             .to_rust()
             .iter()
-            .map(|(k, v)| format!("{}:{}", k.to_rust(), v.to_rust()))
+            .map(|kv| format!("{}:{}", kv.key.to_rust(), kv.value.to_rust()))
             .fold(String::new(), |a, b| a + "," + &b)
             .as_str()[1..]
     );

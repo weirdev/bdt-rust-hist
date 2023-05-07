@@ -11,18 +11,25 @@ pub struct BMap<K, V> {
     data: Box<[u8]>,
 }
 
+// TODO: Extern type
+pub struct KVPair<K, V> {
+    pub key: K,
+    pub value: V,
+}
+
 impl<K: FromJsonValue<K>, V: FromJsonValue<V>> FromJsonValue<BMap<K, V>> for BMap<K, V> {
     fn from_json_value(value: &Value) -> BMap<K, V> {
         if let Value::Object(map) = value {
-            let typed_box: Box<[(K, V)]> = map
+            let typed_box: Box<[KVPair<K, V>]> = map
                 .iter()
                 .map(|(k, v)| {
-                    (
-                        K::from_json_value(&Value::String(k.clone())),
-                        V::from_json_value(v),
-                    )
+                    KVPair {
+                        key: K::from_json_value(&Value::String(k.clone())),
+                        value: V::from_json_value(v),
+                    }
                 })
                 .collect();
+
             return BMap {
                 key_type: PhantomData,
                 value_type: PhantomData,
@@ -34,14 +41,14 @@ impl<K: FromJsonValue<K>, V: FromJsonValue<V>> FromJsonValue<BMap<K, V>> for BMa
 }
 
 impl<K, V> BMap<K, V> {
-    fn get_elements_as_slice(&self) -> &[(K, V)] {
-        let typed_box: &Box<[(K, V)]> = unsafe { transmute(&self.data) };
+    fn get_elements_as_slice(&self) -> &[KVPair<K, V>] {
+        let typed_box: &Box<[KVPair<K, V>]> = unsafe { transmute(&self.data) };
         typed_box.as_ref()
     }
 }
 
-impl<'a, K, V> ToRust<'a, &'a [(K, V)]> for BMap<K, V> {
-    fn to_rust(&'a self) -> &'a [(K, V)] {
+impl<'a, K, V> ToRust<'a, &'a [KVPair<K, V>]> for BMap<K, V> {
+    fn to_rust(&'a self) -> &'a [KVPair<K, V>] {
         self.get_elements_as_slice()
     }
 }
