@@ -1,20 +1,27 @@
+use serde_json::Value;
 use std::str;
 
-use super::FromBytes;
+use super::FromJsonValue;
 
-pub struct BString<'a> {
-    data: &'a [u8],
+pub struct BString {
+    data: Box<[u8]>,
 }
 
-impl<'a> FromBytes<'a, BString<'a>> for BString<'a> {
-    fn from_bytes(bytes: &'a [u8]) -> BString<'a> {
-        BString { data: bytes }
+impl FromJsonValue<BString> for BString {
+    fn from_json_value(value: &Value) -> BString {
+        BString {
+            data: if let Value::String(s) = value {
+                s.as_bytes().iter().cloned().collect()
+            } else {
+                panic!("Attempting to create BString from non-string");
+            },
+        }
     }
 }
 
-impl BString<'_> {
+impl BString {
     #[inline]
     pub fn to_rust(&self) -> &str {
-        unsafe { str::from_utf8_unchecked(self.data) }
+        unsafe { str::from_utf8_unchecked(self.data.as_ref()) }
     }
 }

@@ -1,6 +1,8 @@
 pub mod bstring;
 pub mod bint32;
 
-pub trait FromBytes<'a, T> {
-    fn from_bytes(bytes: &'a [u8]) -> T;
+use serde_json::Value;
+
+pub trait FromJsonValue<T> {
+    fn from_json_value(value: &Value) -> T;
 }
