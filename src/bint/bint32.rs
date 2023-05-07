@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::FromJsonValue;
+use super::{FromJsonValue, ToRust};
 
 pub struct BInt32 {
     // Stored in little endian
@@ -17,13 +17,12 @@ impl FromJsonValue<BInt32> for BInt32 {
                 };
             }
         }
-        panic!("SpecType::Int32 value is not an int")  
+        panic!("Attempting to create BInt32 from non-int")  
     }
 }
 
-impl BInt32 {
-    #[inline]
-    pub fn to_rust(&self) -> i32 {
+impl ToRust<'_, i32> for BInt32 {
+    fn to_rust(&self) -> i32 {
         i32::from_le_bytes(self.data)
     }
 }

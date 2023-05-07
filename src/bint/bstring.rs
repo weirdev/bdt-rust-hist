@@ -1,7 +1,7 @@
 use serde_json::Value;
 use std::str;
 
-use super::FromJsonValue;
+use super::{FromJsonValue, ToRust};
 
 pub struct BString {
     data: Box<[u8]>,
@@ -19,9 +19,8 @@ impl FromJsonValue<BString> for BString {
     }
 }
 
-impl BString {
-    #[inline]
-    pub fn to_rust(&self) -> &str {
+impl<'a> ToRust<'a, &'a str> for BString {
+    fn to_rust(&'a self) -> &'a str {
         unsafe { str::from_utf8_unchecked(self.data.as_ref()) }
     }
 }
