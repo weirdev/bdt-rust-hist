@@ -10,26 +10,20 @@ pub struct BString {
     data: [u8; 16],
 }
 
-impl FromJsonValue<BString> for BString {
-    fn from_json_value(value: &Value) -> BString {
+impl BString {
+    pub fn new(s: &str) -> BString {
+        let boxed: Box<[u8]> = s.as_bytes().iter().cloned().collect();
+
+        let len = boxed.len();
+
+        let fat_ptr = Box::into_raw(boxed);
+        let raw_ptr = fat_ptr as *mut u8 as usize;
+
         BString {
-            data: if let Value::String(s) = value {
-                let boxed: Box<[u8]> = s.as_bytes().iter().cloned().collect();
-
-                let len = boxed.len();
-
-                let fat_ptr = Box::into_raw(boxed);
-                let raw_ptr = fat_ptr as *mut u8 as usize;
-
-                unsafe { transmute([raw_ptr, len]) }
-            } else {
-                panic!("Attempting to create BString from non-string");
-            },
+            data: unsafe { transmute([raw_ptr, len]) },
         }
     }
-}
 
-impl BString {
     fn get_elements_as_slice(&self) -> &[u8] {
         let raw_ptr = usize::from_le_bytes(self.data[..8].try_into().unwrap()) as *const u8;
         let len = usize::from_le_bytes(self.data[8..].try_into().unwrap());
@@ -48,6 +42,16 @@ impl BString {
         // println!("len: {}", len);
 
         unsafe { slice::from_raw_parts_mut(raw_ptr, len) }
+    }
+}
+
+impl FromJsonValue<BString> for BString {
+    fn from_json_value(value: &Value) -> BString {
+        if let Value::String(s) = value {
+            BString::new(s)
+        } else {
+            panic!("Attempting to create BString from non-string");
+        }
     }
 }
 
