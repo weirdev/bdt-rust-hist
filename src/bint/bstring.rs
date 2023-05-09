@@ -12,15 +12,19 @@ pub struct BString {
 
 impl BString {
     pub fn new(s: &str) -> BString {
-        let boxed: Box<[u8]> = s.as_bytes().iter().cloned().collect();
+        if s.len() > 0 {
+            let boxed: Box<[u8]> = s.as_bytes().iter().cloned().collect();
 
-        let len = boxed.len();
+            let fat_ptr = Box::into_raw(boxed);
+            let raw_ptr = fat_ptr as *mut u8 as usize;
 
-        let fat_ptr = Box::into_raw(boxed);
-        let raw_ptr = fat_ptr as *mut u8 as usize;
-
-        BString {
-            data: unsafe { transmute([raw_ptr, len]) },
+            BString {
+                data: unsafe { transmute([raw_ptr, s.len()]) },
+            }
+        } else {
+            BString {
+                data: unsafe { transmute([0 as u64, 0 as u64]) },
+            }
         }
     }
 

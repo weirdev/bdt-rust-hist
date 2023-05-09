@@ -12,3 +12,8 @@ serde_json = "1.0"
 [lib]
 # name = "bin_data_types_rust"
 crate-type = ["cdylib"]
+
+# [features]
+# unstable = [
+#     "generic_const_exprs"
+# ]

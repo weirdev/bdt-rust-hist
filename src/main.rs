@@ -1,3 +1,5 @@
+#![feature(generic_const_exprs)]
+
 mod bint;
 mod spec;
 
@@ -60,7 +62,8 @@ fn map_string_int32_test() {
         &bint
             .to_rust()
             .iter()
-            .map(|kv| format!("{}:{}", kv.key.to_rust(), kv.value.to_rust()))
+            .map(|kv| kv.to_rust())
+            .map(|kv| format!("{}:{}", kv.0.to_rust(), kv.1.to_rust()))
             .fold(String::new(), |a, b| a + "," + &b)
             .as_str()[1..]
     );
